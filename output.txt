@@ -1,0 +1,124 @@
+########Curl output of the application.#################
+
+root@testlabuma-virtual-machine:~/mybox-test# curl http://192.168.33.10:5000
+{"headers":{"Accept":"*/*","Host":"192.168.33.10:5000","User-Agent":"curl/7.47.0"},"origin":"192.168.33.1"}
+
+
+###############Ansible provision output.###################
+
+root@testlabuma-virtual-machine:~/mybox-test# vagrant provision
+DEPRECATION: The 'sudo' option for the Ansible provisioner is deprecated.
+Please use the 'become' option instead.
+The 'sudo' option will be removed in a future release of Vagrant.
+
+==> default: Running provisioner: ansible...
+Vagrant has automatically selected the compatibility mode '2.0'
+according to the Ansible version installed (2.0.0.2).
+
+Alternatively, the compatibility mode can be specified in your Vagrantfile:
+https://www.vagrantup.com/docs/provisioning/ansible_common.html#compatibility_mode
+
+    default: Running ansible-playbook...
+PYTHONUNBUFFERED=1 ANSIBLE_FORCE_COLOR=true ANSIBLE_HOST_KEY_CHECKING=false ANSIBLE_SSH_ARGS='-o UserKnownHostsFile=/dev/null -o IdentitiesOnly=yes -o ControlMaster=auto -o ControlPersist=60s' ansible-playbook --connection=ssh --timeout=30 --limit="default" --inventory-file=/root/mybox-test/.vagrant/provisioners/ansible/inventory --become -v app.yml
+Using /etc/ansible/ansible.cfg as config file
+
+PLAY [Configure application] ***************************************************
+
+TASK [setup] *******************************************************************
+ok: [default]
+
+TASK [Install packages] ********************************************************
+ok: [default] => (item=[u'git', u'python-pip']) => {"cache_update_time": 1556699916, "cache_updated": true, "changed": false, "item": ["git", "python-pip"]}
+
+TASK [create directory] ********************************************************
+ok: [default] => {"changed": false, "gid": 0, "group": "root", "mode": "0755", "owner": "root", "path": "/webapps/devops/", "size": 4096, "state": "directory", "uid": 0}
+
+TASK [Clone repository] ********************************************************
+ok: [default] => {"after": "e62b3527b4a7b0256ec0e05666e2c8d3be5495d1", "before": "e62b3527b4a7b0256ec0e05666e2c8d3be5495d1", "changed": false}
+
+TASK [Install requirements] ****************************************************
+ok: [default] => {"changed": false, "cmd": "/usr/bin/pip install -r /webapps/devops/requirements.txt", "name": null, "requirements": "/webapps/devops/requirements.txt", "state": "present", "stderr": "You are using pip version 8.1.1, however version 19.1 is available.\nYou should consider upgrading via the 'pip install --upgrade pip' command.\n", "stdout": "Requirement already satisfied (use --upgrade to upgrade): Flask in /usr/local/lib/python2.7/dist-packages (from -r /webapps/devops/requirements.txt (line 1))\nRequirement already satisfied (use --upgrade to upgrade): Werkzeug in /usr/local/lib/python2.7/dist-packages (from -r /webapps/devops/requirements.txt (line 2))\nRequirement already satisfied (use --upgrade to upgrade): Jinja2>=2.10 in /usr/local/lib/python2.7/dist-packages (from Flask->-r /webapps/devops/requirements.txt (line 1))\nRequirement already satisfied (use --upgrade to upgrade): itsdangerous>=0.24 in /usr/local/lib/python2.7/dist-packages (from Flask->-r /webapps/devops/requirements.txt (line 1))\nRequirement already satisfied (use --upgrade to upgrade): click>=5.1 in /usr/local/lib/python2.7/dist-packages (from Flask->-r /webapps/devops/requirements.txt (line 1))\nRequirement already satisfied (use --upgrade to upgrade): MarkupSafe>=0.23 in /usr/local/lib/python2.7/dist-packages (from Jinja2>=2.10->Flask->-r /webapps/devops/requirements.txt (line 1))\n", "stdout_lines": ["Requirement already satisfied (use --upgrade to upgrade): Flask in /usr/local/lib/python2.7/dist-packages (from -r /webapps/devops/requirements.txt (line 1))", "Requirement already satisfied (use --upgrade to upgrade): Werkzeug in /usr/local/lib/python2.7/dist-packages (from -r /webapps/devops/requirements.txt (line 2))", "Requirement already satisfied (use --upgrade to upgrade): Jinja2>=2.10 in /usr/local/lib/python2.7/dist-packages (from Flask->-r /webapps/devops/requirements.txt (line 1))", "Requirement already satisfied (use --upgrade to upgrade): itsdangerous>=0.24 in /usr/local/lib/python2.7/dist-packages (from Flask->-r /webapps/devops/requirements.txt (line 1))", "Requirement already satisfied (use --upgrade to upgrade): click>=5.1 in /usr/local/lib/python2.7/dist-packages (from Flask->-r /webapps/devops/requirements.txt (line 1))", "Requirement already satisfied (use --upgrade to upgrade): MarkupSafe>=0.23 in /usr/local/lib/python2.7/dist-packages (from Jinja2>=2.10->Flask->-r /webapps/devops/requirements.txt (line 1))"], "version": null, "virtualenv": null}
+
+TASK [Copy restart app configuration] ******************************************
+ok: [default] => {"changed": false, "gid": 0, "group": "root", "mode": "0644", "owner": "root", "path": "/etc/init/devops-challange.conf", "size": 105, "state": "file", "uid": 0}
+
+TASK [Make sure the server is running] *****************************************
+ok: [default] => {"changed": false, "name": "devops-challange", "state": "started"}
+
+TASK [set locale] **************************************************************
+changed: [default] => {"changed": true, "cmd": ["/usr/sbin/update-locale", "LANG=en_US.UTF-8", "LC_ALL=en_US.UTF-8"], "delta": "0:00:00.513560", "end": "2019-05-01 08:39:50.634442", "rc": 0, "start": "2019-05-01 08:39:50.120882", "stderr": "", "stdout": "", "stdout_lines": [], "warnings": []}
+
+TASK [set /etc/localtime] ******************************************************
+ok: [default] => {"changed": false, "dest": "/etc/localtime", "gid": 0, "group": "root", "mode": "0777", "owner": "root", "size": 23, "src": "/usr/share/zoneinfo/UTC", "state": "link", "uid": 0}
+
+TASK [Update Timezone to UTC] **************************************************
+ok: [default] => {"changed": false, "checksum": "dbb2b866cddd387df58c596fbd21f9d99053727b", "dest": "/etc/timezone", "gid": 0, "group": "root", "mode": "0644", "owner": "root", "path": "/etc/timezone", "size": 18, "state": "file", "uid": 0}
+
+PLAY RECAP *********************************************************************
+default                    : ok=10   changed=1    unreachable=0    failed=0  
+
+
+############### Max cpu utilization output of VM ######################
+
+vagrant@ubuntu-xenial:/lib/systemd/system$ lscpu
+Architecture:          x86_64
+CPU op-mode(s):        32-bit, 64-bit
+Byte Order:            Little Endian
+CPU(s):                2
+On-line CPU(s) list:   0,1
+Thread(s) per core:    1
+Core(s) per socket:    2
+Socket(s):             1
+NUMA node(s):          1
+Vendor ID:             GenuineIntel
+CPU family:            6
+Model:                 61
+Model name:            Intel(R) Core(TM) i7-5500U CPU @ 2.40GHz
+Stepping:              4
+CPU MHz:               2434.506
+BogoMIPS:              4869.01
+Hypervisor vendor:     KVM
+Virtualization type:   full
+L1d cache:             32K
+L1i cache:             32K
+L2 cache:              256K
+L3 cache:              4096K
+NUMA node0 CPU(s):     0,1
+Flags:                 fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc pni pclmulqdq ssse3 cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm 3dnowprefetch invpcid_single kaiser fsgsbase invpcid rdseed
+
+
+#############files created / updated location #############
+
+vagrant@ubuntu-xenial:/lib/systemd/system$ ls -ltr /lib/systemd/system/devops-challange.service 
+-rw-r--r-- 1 root root 209 May  1 08:47 /lib/systemd/system/devops-challange.service
+
+vagrant@ubuntu-xenial:/lib/systemd/system$ ls -ltr /etc/init/devops-challange.conf 
+-rw-r--r-- 1 root root 105 May  1 07:35 /etc/init/devops-challange.conf
+
+vagrant@ubuntu-xenial:/lib/systemd/system$ ls -ltr /etc/localtime 
+lrwxrwxrwx 1 root root 23 May  1 07:58 /etc/localtime -> /usr/share/zoneinfo/UTC
+
+
+##############app running status #############
+
+vagrant@ubuntu-xenial:/lib/systemd/system$ sudo service devops-challange status
+● devops-challange.service - Flask web server
+   Loaded: loaded (/lib/systemd/system/devops-challange.service; disabled; vendor preset: enabled)
+   Active: active (running) since Wed 2019-05-01 08:15:08 UTC; 39min ago
+ Main PID: 2151 (python)
+    Tasks: 1
+   Memory: 15.5M
+      CPU: 7.274s
+   CGroup: /system.slice/devops-challange.service
+           └─2151 python /webapps/devops/app.py
+
+May 01 08:15:08 ubuntu-xenial systemd[1]: Started Flask web server.
+May 01 08:15:15 ubuntu-xenial app.py[2151]:  * Serving Flask app "app" (lazy loading)
+May 01 08:15:15 ubuntu-xenial app.py[2151]:  * Environment: production
+May 01 08:15:15 ubuntu-xenial app.py[2151]:    WARNING: Do not use the development server in a production environment.
+May 01 08:15:15 ubuntu-xenial app.py[2151]:    Use a production WSGI server instead.
+May 01 08:15:15 ubuntu-xenial app.py[2151]:  * Debug mode: off
+May 01 08:15:15 ubuntu-xenial app.py[2151]:  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+May 01 08:49:51 ubuntu-xenial app.py[2151]: 192.168.33.1 - - [01/May/2019 08:49:51] "GET / HTTP/1.1" 200 -
+
+
