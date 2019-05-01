@@ -1,0 +1,48 @@
+- name: Configure application
+  hosts: all
+  become: true
+  become_method: sudo
+  vars:
+      repository_url: https://bitbucket.org/azneita/devops-challenge
+      repository_path: /webapps/devops
+
+  tasks:
+    - name: Install packages
+      apt: update_cache=yes name={{ item }} state=present
+      with_items:
+        - git
+        - python-pip
+
+    - name: create directory
+      file: 
+        path: /webapps/devops/
+        state: directory
+    
+    - name: Clone repository
+      git: repo='{{ repository_url }}' dest='{{ repository_path }}'
+
+    - name: Install requirements
+      pip: requirements='{{ repository_path }}/requirements.txt'
+
+    - name: Copy restart app configuration
+      template: src=devops-challange.restart.j2 dest=/etc/init/devops-challange.conf
+
+    - name: Make sure the server is running
+      service: name=devops-challange state=started
+
+    - name: set locale
+      command: /usr/sbin/update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
+      
+    - name: set /etc/localtime
+      file: src=/usr/share/zoneinfo/UTC dest=/etc/localtime state=link force=yes
+
+    - name: Update Timezone to UTC
+      copy: content="Universal-timezone" dest=/etc/timezone owner=root group=root mode=0644
+      register: timezone
+      notify: update tzdata
+
+  handlers:
+
+    - name: update timezone
+      command: dpkg-reconfigure --frontend noninteractive tzdata
+      when: timezone.changed
