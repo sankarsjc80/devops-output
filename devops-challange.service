@@ -1,0 +1,11 @@
+[Unit]
+Description= web server
+[Install]
+WantedBy=multi-user.target
+[Service]
+User=vagrant
+PermissionsStartOnly=true
+ExecStart=/webapps/devops/app.py
+TimeoutSec=600
+Restart=on-failure
+RuntimeDirectoryMode=755
